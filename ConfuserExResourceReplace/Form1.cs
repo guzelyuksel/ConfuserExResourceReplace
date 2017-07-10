@@ -73,7 +73,15 @@ namespace ConfuserExResourceReplace
                         MessageBox.Show("Resource counts must be equal !");
                     }
                 }
-                mainasm.Write(this.textBox1.Text.Replace(".exe", "_fixed.exe"), new ModuleWriterOptions { Logger = DummyLogger.NoThrowInstance });
+                ModuleWriterOptions moduleWriterOptions = new ModuleWriterOptions(mainasm);
+                if (mainasm.IsILOnly)
+                {
+                    
+                    moduleWriterOptions.MetaDataOptions.Flags |= (MetaDataFlags.PreserveTypeRefRids | MetaDataFlags.PreserveTypeDefRids | MetaDataFlags.PreserveFieldRids | MetaDataFlags.PreserveMethodRids | MetaDataFlags.PreserveParamRids | MetaDataFlags.PreserveMemberRefRids | MetaDataFlags.PreserveStandAloneSigRids | MetaDataFlags.PreserveEventRids | MetaDataFlags.PreservePropertyRids | MetaDataFlags.PreserveTypeSpecRids | MetaDataFlags.PreserveMethodSpecRids | MetaDataFlags.PreserveUSOffsets | MetaDataFlags.PreserveBlobOffsets | MetaDataFlags.PreserveExtraSignatureData | MetaDataFlags.KeepOldMaxStack);
+                    moduleWriterOptions.Logger = DummyLogger.NoThrowInstance;
+                }
+
+                mainasm.Write(this.textBox1.Text.Replace(".exe", "_fixed.exe"), moduleWriterOptions);
             }
             catch (Exception ex)
             {
